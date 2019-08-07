@@ -67,7 +67,7 @@ team_dictionary = {"Basaksehir" : "Istanbul Basaksehir",
 					"M'gladbach"  : "Borussia M.Gladbach",
 				   "Frankfurt" : "Eintracht Frankfurt",
 				   "Fortuna" : "Fortuna Duesseldorf",
-           "Dusseldorf" : "Fortuna Duesseldorf",           
+		   "Dusseldorf" : "Fortuna Duesseldorf",           
 				   "Mainz" : "Mainz 05",
 				   "Nurnberg" : "Nuernberg",
 				   "RB Leipzig": "RasenBallsport Leipzig",
@@ -82,15 +82,16 @@ team_dictionary = {"Basaksehir" : "Istanbul Basaksehir",
 		}
 
 time_start=datetime.now()
-champs = [["English Premier League", "http://sports.williamhill.com/bet/en-gb/betting/t/295/English+Premier+League.html", "http://www.oddsportal.com/soccer/england/premier-league/"], 
-["Championship", "http://sports.williamhill.com/bet/en-gb/betting/t/292/English+Championship.html", "http://www.oddsportal.com/soccer/england/championship/"], 
-["Serie A", "http://sports.williamhill.com/bet/en-gb/betting/t/321/Italian+Serie+A.html", "http://www.oddsportal.com/soccer/italy/serie-a/"], 
-["BundesLiga", "http://sports.williamhill.com/bet/en-gb/betting/t/315/German+Bundesliga.html", "http://www.oddsportal.com/soccer/germany/bundesliga/"], 
-["France","http://sports.williamhill.com/bet/en-gb/betting/t/312/French+Ligue+1.html", "http://www.oddsportal.com/soccer/france/ligue-1/"], 
-["Eredivisie","http://sports.williamhill.com/bet/en-gb/betting/t/306/Dutch+Eredivisie.html", "http://www.oddsportal.com/soccer/netherlands/eredivisie/"], 
-["Turkey","http://sports.williamhill.com/bet/en-gb/betting/t/325/Turkish+Super+Lig.html", "http://www.oddsportal.com/soccer/turkey/super-lig/"], 
-["La Liga","http://sports.williamhill.com/bet/en-gb/betting/t/338/Spanish+La+Liga+Primera.html", "http://www.oddsportal.com/soccer/spain/laliga/"], 
-["Russia","http://sports.williamhill.com/bet/en-gb/betting/t/334/Russian+Premier+League.html", "http://www.oddsportal.com/soccer/russia/premier-league/"]]
+champs = [["English Premier League", "https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY295/English-Premier-League/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/england/premier-league/"], 
+["Championship", "https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY292/English-Championship/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/england/championship/"], 
+["Serie A", "https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY321/Italian-Serie-A/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/italy/serie-a/"], 
+["BundesLiga", "https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY315/German-Bundesliga/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/germany/bundesliga/"], 
+["France","https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY312/French-Ligue-1/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/france/ligue-1/"], 
+["Eredivisie","https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY306/Dutch-Eredivisie/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/netherlands/eredivisie/"], 
+["Turkey","https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY325/Turkish-Super-Lig/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/turkey/super-lig/"], 
+["La Liga","https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY338/Spanish-La-Liga-Primera/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/spain/laliga/"], 
+["Russia","https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY334/Russian-Premier-League/matches/OB_MGMB/Match-Betting", "http://www.oddsportal.com/soccer/russia/premier-league/"],
+["Portugal", "https://sports.williamhill.com/betting/en-gb/football/competitions/OB_TY331/Portuguese-Primeira-Liga/matches/OB_MGMB/Match-Betting", "https://www.oddsportal.com/soccer/portugal/primeira-liga/"]]
 
 start_number = int(input('''
 Select champ to start: 
@@ -103,84 +104,74 @@ Eredivisie - 5
 Turkey - 6
 La Liga - 7
 Russia - 8
+Europa league - 9
 '''))
 end_number = int(input("Number to finish:"))
 ALLTHEDAMNPLAYERS={}
 
 index=0
-BaseUrl = 'http://sports.williamhill.com/bet/en-gb/betting/t/295/English+Premier+League.html'
+BaseUrl = 'https://sports.williamhill.com'
 binary = FirefoxBinary()
 browser = webdriver.Firefox(firefox_binary = binary)
 browser.set_window_size(1300, 900)
-browser.get('http://sports.williamhill.com/bet/en-gb/betting/')
-time.sleep(5)
-more_matches = browser.find_element_by_id('yesBtn')
-more_matches.click()
-odds_element = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.ID, "oddsSelect")))
-select = Select(odds_element)
-select.select_by_visible_text("Decimal")
-
 
 while start_number <= end_number:
 	champ_name = champs[start_number][0]
 	browser.get(champs[start_number][1])
-	time.sleep(5)
+	myElem = WebDriverWait(browser, 20).until(EC.invisibility_of_element_located((By.ID, 'wh-global-overlay')))
+	time.sleep(2)
 	content = browser.page_source
 	soup = BeautifulSoup(''.join(content), 'lxml')
-	links = soup.find_all(title="More markets", class_="")
-
-
+	select_type = browser.find_element_by_link_text('Odds Format').click()
+	decimal_select = browser.find_element_by_link_text('Decimal').click()
+	links = soup.find_all(class_="sp-o-market__more")
 	m_number = len(links) - 1
 	match = 0
 	while match <= m_number:
-
-		MatchtUrl = links[match].get('href')
-		   
+		MatchtUrl = BaseUrl + links[match].find('a').get('href')
 		try:
 			browser.get(MatchtUrl)
-			time.sleep(4)
-			more_matches = browser.find_element_by_link_text('Goals')
-			more_matches.click()
-			time.sleep(5)
+			myElem = WebDriverWait(browser, 20).until(EC.invisibility_of_element_located((By.ID, 'wh-global-overlay')))
+			time.sleep(2)
+			Goals_tab = browser.find_element_by_link_text('Team Goals').click()
+			myElem = WebDriverWait(browser, 20).until(EC.invisibility_of_element_located((By.ID, 'wh-global-overlay')))
+			time.sleep(2)
 		except Exception as e:
-			print(e)
+			# print(e)
+			print( "----------Error loading page---------")
+			browser.refresh()
+			time.sleep(15)
+			
 			try:
-				browser.close()
 				browser.get(MatchtUrl)
-				time.sleep(7)
-				more_matches = browser.find_element_by_id('yesBtn')
-				more_matches.click()
-				odds_element = WebDriverWait(browser, 6).until(EC.presence_of_element_located((By.ID, "oddsSelect")))
-				select = Select(odds_element)
-				select.select_by_visible_text("Decimal")
-				more_matches = browser.find_element_by_link_text('Goals')
-				more_matches.click()
-				time.sleep(9)
+				myElem = WebDriverWait(browser, 20).until(EC.invisibility_of_element_located((By.ID, 'wh-global-overlay')))
+				time.sleep(2)
+				Goals_tab = browser.find_element_by_link_text('Team Goals').click()
+				myElem = WebDriverWait(browser, 20).until(EC.invisibility_of_element_located((By.ID, 'wh-global-overlay')))
+				time.sleep(2)
 			except:
 				print("Can't get ceffs for", MatchtUrl )
+				browser.refresh()
+				time.sleep(15)
 
 			
 		else:
 
 			content = browser.page_source
 			soup = BeautifulSoup(''.join(content), 'lxml')
-			team_link = MatchtUrl.split("/")
-			Home_Team = team_link[len(team_link) - 1 ].split("+v+")[0].replace("+", " ").replace("%27", "'").replace("%2d", "-").replace("%2e", ".")
-			Guest_Team = team_link[len(team_link) - 1 ].split("+v+")[1].strip("html").replace("+", " ").strip(".").replace("%27", "'").replace("%2d", "-").replace("%2e", ".")
-
+			Home_Team = soup.find('h1', class_="header-panel__title").get_text().split(" vs ")[0]
+			Guest_Team = soup.find('h1', class_="header-panel__title").get_text().split(" vs ")[1]
 			print(Home_Team, Guest_Team)
-			cl_sheet = "This table shows " + Home_Team + ' v ' + Guest_Team + " - To Keep A Clean Sheet"
-			cleansheet = soup.find("table", { "summary" : cl_sheet})
+
+			cl_sheet = "To Keep A Clean Sheet"
+			Search_text = Home_Team + ' Over/Under 1.5 Goals'
+			Search_text2 = Guest_Team + ' Over/Under 1.5 Goals' 
+			
 			try:
-				home_cs = cleansheet.find_all(class_= "eventprice")[0].get_text().strip().replace(".", ",")
-				guest_cs = cleansheet.find_all(class_= "eventprice")[1].get_text().strip().replace(".", ",")          
-				home_over_summary = "This table shows " + Home_Team + ' v ' + Guest_Team + " - " +  Home_Team + " Under/Over 1.5 Goals"
-				home_over_table = soup.find("table", { "summary" : home_over_summary})
-				home_over = home_over_table.find_all(class_= "eventprice")[1].get_text().strip().replace(".", ",")
-					
-				guest_over_summary = "This table shows " + Home_Team + ' v ' + Guest_Team + " - " +  Guest_Team + " Under/Over 1.5 Goals"
-				guest_over_table = soup.find("table", { "summary" : guest_over_summary})
-				guest_over = guest_over_table.find_all(class_= "eventprice")[1].get_text().strip().replace(".", ",")
+				home_cs = soup.find('h2', string = cl_sheet).findParent().findParent().find_all('span',class_="betbutton__odds")[0].get_text().replace(".", ",")
+				guest_cs = soup.find('h2', string = cl_sheet).findParent().findParent().find_all('span',class_="betbutton__odds")[1].get_text().replace(".", ",")          
+				home_over = soup.find('h2', string = Search_text).findParent().findParent().find_all('span',class_="betbutton__odds")[1].get_text().replace(".", ",")
+				guest_over = soup.find('h2', string = Search_text2).findParent().findParent().find_all('span',class_="betbutton__odds")[1].get_text().replace(".", ",")
 			except AttributeError as attribute:
 				print(attribute)
 				home_cs = "-"
@@ -196,6 +187,10 @@ while start_number <= end_number:
 				print("timeout error")
 			except WebDriverException as er:
 				print(er)
+				home_cs = "-"
+				guest_cs = "-"
+				home_over = "-"
+				guest_over = "-"
 			#Replace team names to one unified Whoscore-like names
 			if Guest_Team in team_dictionary.keys():
 				Guest_Team = team_dictionary[Guest_Team]
